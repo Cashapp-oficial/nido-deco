@@ -1,5 +1,5 @@
 // ===== Configuración: cambiá estos datos y listo =====
-const WHATSAPP = "5491100000000";   // número con código de país, sin + ni espacios
+const WHATSAPP = "5493518078862";   // número con código de país, sin + ni espacios
 const DESCUENTO_TRANSFERENCIA = 35; // % OFF pagando por transferencia
 const CUOTAS = 12;
 const ENVIO = 6500;                 // costo de envío a domicilio
