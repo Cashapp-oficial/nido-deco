@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout · Nido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+<style>
+h1{font-size:34px;margin:34px 0 34px}
+.checkout{display:grid;grid-template-columns:1.2fr .9fr;gap:64px;align-items:start}
+fieldset{border:0;margin-bottom:38px}
+legend{font-family:Jost;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--tinta);margin-bottom:16px;display:flex;gap:10px;align-items:center}
+legend i{font-style:normal;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--tinta);font-size:12px;letter-spacing:0}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.campos .todo{grid-column:1/-1}
+label.campo{display:flex;flex-direction:column;font-size:12px;color:var(--suave);gap:5px}
+input[type=text],input[type=email],input[type=tel],select{border:1px solid var(--linea);background:#fff;padding:13px 14px;font-size:15px;outline:none;transition:border-color .2s;width:100%;font-weight:300}
+input:focus,select:focus{border-color:var(--tinta)}
+input:user-invalid{border-color:#c0392b}
+.opcion{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--linea);background:#fff;padding:16px;cursor:pointer;transition:border-color .2s}
+.opcion + .opcion{margin-top:10px}
+.opcion:has(input:checked){border-color:var(--tinta)}
+.opcion input{margin-top:4px;accent-color:var(--tinta)}
+.opcion div{flex:1}
+.opcion b{display:block;color:var(--tinta);font-weight:400}
+.opcion small{color:var(--suave);font-size:12.5px}
+.opcion .derecha{font-family:Jost;color:var(--tinta);white-space:nowrap}
+.opcion .naranja{color:var(--acento)}
+#direccion{margin-top:12px}
+#direccion[hidden]{display:none}
+.confirmar{width:100%;padding:19px}
+.aviso{font-size:12px;color:var(--suave);text-align:center;margin-top:12px}
+
+.resumen{background:var(--crema);padding:28px;position:sticky;top:90px}
+.resumen h2{font-size:18px;margin-bottom:18px}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--linea);font-size:13.5px}
+.item img{width:64px;height:80px;object-fit:cover}
+.item b{display:block;color:var(--tinta);font-weight:400;font-family:Jost;font-size:15px}
+.item .chica{color:var(--suave);font-size:12px}
+.mini{display:inline-flex;align-items:center;border:1px solid var(--linea);background:#fff;margin-top:6px}
+.mini button{width:26px;height:26px}
+.mini span{min-width:20px;text-align:center;font-size:12px}
+.item .der{text-align:right}
+.quitar{display:block;font-size:11.5px;color:var(--suave);text-decoration:underline;margin-top:6px;margin-left:auto}
+.cuentas{margin-top:18px;font-size:14px}
+.cuentas div{display:flex;justify-content:space-between;padding:4px 0}
+.cuentas .desc{color:var(--acento)}
+.cuentas .total{border-top:1px solid var(--tinta);margin-top:10px;padding-top:14px;font-family:Jost;font-size:20px;color:var(--tinta)}
+.cuentas .cuotas{font-size:12.5px;color:var(--suave);justify-content:flex-end}
+.vacio,.listo{text-align:center;padding:80px 0;max-width:520px;margin:0 auto}
+.vacio p,.listo p{color:var(--suave);margin:12px 0 28px}
+.listo .tilde{width:64px;height:64px;border-radius:50%;background:var(--tinta);color:#fff;display:grid;place-items:center;margin:0 auto 22px;font-size:28px}
+.listo h1{margin:0 0 6px}
+.listo .num{font-family:Jost;letter-spacing:.14em;color:var(--tinta)}
+.listo .btn{margin:6px}
+@media (max-width:860px){
+  .checkout{grid-template-columns:1fr;gap:34px}
+  .resumen{position:static;order:-1;padding:22px}
+  .campos{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="ancho">
+  <a href="index.html" class="marca">NIDO</a>
+  <a href="index.html#productos" class="bolsa">Seguir comprando</a>
+</div></header>
+
+<main class="ancho" id="contenido"></main>
+
+<footer class="pie"><div class="ancho">
+  <span>© 2026 Nido · Deco en melamina</span>
+  <span><a href="#">Cambios y devoluciones</a> · <a href="#">Botón de arrepentimiento</a></span>
+</div></footer>
+
+<script src="tienda.js"></script>
+<script>
+const contenido = document.getElementById("contenido");
+const provincias = ["Buenos Aires","CABA","Catamarca","Chaco","Chubut","Córdoba","Corrientes","Entre Ríos","Formosa","Jujuy","La Pampa","La Rioja","Mendoza","Misiones","Neuquén","Río Negro","Salta","San Juan","San Luis","Santa Cruz","Santa Fe","Santiago del Estero","Tierra del Fuego","Tucumán"];
+
+function cuentas(carrito, entrega, pago) {
+  const subtotal = carrito.reduce((s, i) => s + buscar(i.id).precio * i.cant, 0);
+  const envio = entrega === "envio" && subtotal < ENVIO_GRATIS_DESDE ? ENVIO : 0;
+  const descuento = pago === "transferencia" ? subtotal * DESCUENTO_TRANSFERENCIA / 100 : 0;
+  return {subtotal, envio, descuento, total: subtotal - descuento + envio};
+}
+
+function pintar() {
+  const carrito = leerCarrito();
+  if (!carrito.length) {
+    contenido.innerHTML = `<div class="vacio"><h1>Tu carrito está vacío</h1><p>Elegí algo de la colección y volvé por acá.</p><a class="btn" href="index.html#productos">Ver productos</a></div>`;
+    return;
+  }
+  if (!document.getElementById("form")) contenido.innerHTML = `
+    <h1>Finalizar compra</h1>
+    <div class="checkout">
+      <form id="form" novalidate>
+        <fieldset>
+          <legend><i>1</i>Tus datos</legend>
+          <div class="campos">
+            <label class="campo todo">Email<input type="email" name="email" required autocomplete="email"></label>
+            <label class="campo">Nombre y apellido<input type="text" name="nombre" required autocomplete="name"></label>
+            <label class="campo">Teléfono<input type="tel" name="tel" required autocomplete="tel" placeholder="11 1234-5678"></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><i>2</i>Entrega</legend>
+          <label class="opcion"><input type="radio" name="entrega" value="envio" checked><div><b>Envío a domicilio</b><small>Llega en 5 a 7 días hábiles · gratis desde ${plata(ENVIO_GRATIS_DESDE)}</small></div><span class="derecha" id="costoEnvio"></span></label>
+          <label class="opcion"><input type="radio" name="entrega" value="retiro"><div><b>Retiro en el taller</b><small>Te avisamos cuando esté listo</small></div><span class="derecha">Gratis</span></label>
+          <div class="campos" id="direccion">
+            <label class="campo todo">Calle y número<input type="text" name="calle" required autocomplete="street-address"></label>
+            <label class="campo">Ciudad<input type="text" name="ciudad" required autocomplete="address-level2"></label>
+            <label class="campo">Código postal<input type="text" name="cp" required autocomplete="postal-code" inputmode="numeric"></label>
+            <label class="campo todo">Provincia<select name="provincia" required><option value="">Elegí tu provincia</option>${provincias.map(p => `<option>${p}</option>`).join("")}</select></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><i>3</i>Pago</legend>
+          <label class="opcion"><input type="radio" name="pago" value="transferencia" checked><div><b>Transferencia bancaria</b><small>Te mandamos los datos para transferir al confirmar</small></div><span class="derecha naranja">${DESCUENTO_TRANSFERENCIA}% OFF</span></label>
+          <label class="opcion"><input type="radio" name="pago" value="tarjeta"><div><b>Tarjeta de crédito o débito</b><small>Hasta ${CUOTAS} cuotas sin interés · te mandamos el link de pago</small></div><span class="derecha">${CUOTAS} cuotas</span></label>
+        </fieldset>
+        <button class="btn confirmar" type="submit">Confirmar pedido</button>
+        <p class="aviso">No se cobra nada ahora: te escribimos para coordinar el pago y el envío.</p>
+      </form>
+      <aside class="resumen"><h2>Tu pedido</h2><div id="items"></div><div class="cuentas" id="cuentas"></div></aside>
+    </div>`;
+
+  const form = document.getElementById("form");
+  const entrega = form.entrega.value, pago = form.pago.value;
+  document.getElementById("direccion").hidden = entrega !== "envio";
+  document.querySelectorAll("#direccion [required]").forEach(i => i.disabled = entrega !== "envio");
+
+  const c = cuentas(carrito, entrega, pago);
+  document.getElementById("costoEnvio").textContent = c.subtotal >= ENVIO_GRATIS_DESDE ? "Gratis" : plata(ENVIO);
+  document.getElementById("items").innerHTML = carrito.map((i, n) => { const p = buscar(i.id); return `
+    <div class="item"><img src="${foto(p,1)}" alt="">
+      <div><b>${p.nombre}</b><span class="chica">${i.color}</span><br>
+        <span class="mini"><button type="button" data-cambio="${n}" data-d="-1" aria-label="Restar">−</button><span>${i.cant}</span><button type="button" data-cambio="${n}" data-d="1" aria-label="Sumar">+</button></span></div>
+      <div class="der">${plata(p.precio * i.cant)}<button type="button" class="quitar" data-quitar="${n}">Quitar</button></div>
+    </div>`; }).join("");
+  document.getElementById("cuentas").innerHTML = `
+    <div><span>Subtotal</span><span>${plata(c.subtotal)}</span></div>
+    ${c.descuento ? `<div class="desc"><span>Transferencia (${DESCUENTO_TRANSFERENCIA}% OFF)</span><span>− ${plata(c.descuento)}</span></div>` : ""}
+    <div><span>Envío</span><span>${entrega === "retiro" ? "Retiro" : c.envio ? plata(c.envio) : "Gratis"}</span></div>
+    <div class="total"><span>Total</span><span>${plata(c.total)}</span></div>
+    ${pago === "tarjeta" ? `<div class="cuotas">o ${CUOTAS} cuotas sin interés de ${plata(c.total / CUOTAS)}</div>` : ""}`;
+}
+
+contenido.addEventListener("change", e => { if (e.target.name === "entrega" || e.target.name === "pago") pintar(); });
+contenido.addEventListener("click", e => {
+  const carrito = leerCarrito();
+  const a = e.target.closest("[data-cambio]"), q = e.target.closest("[data-quitar]");
+  if (a) { const i = carrito[a.dataset.cambio]; i.cant = Math.max(1, i.cant + Number(a.dataset.d)); guardarCarrito(carrito); pintar(); }
+  if (q) { carrito.splice(q.dataset.quitar, 1); guardarCarrito(carrito); pintar(); }
+});
+
+contenido.addEventListener("submit", e => {
+  e.preventDefault();
+  const form = e.target;
+  if (!form.checkValidity()) { form.reportValidity(); return; }
+  const d = Object.fromEntries(new FormData(form));
+  const carrito = leerCarrito(), c = cuentas(carrito, d.entrega, d.pago);
+  const numero = "NID-" + Date.now().toString().slice(-5);
+  const mensaje = [
+    `Hola! Hice el pedido ${numero}:`,
+    ...carrito.map(i => `- ${i.cant} x ${buscar(i.id).nombre} (${i.color})`),
+    `Total: ${plata(c.total)} · ${d.pago === "transferencia" ? "Transferencia" : "Tarjeta"}`,
+    d.entrega === "envio" ? `Envío a: ${d.calle}, ${d.ciudad} (${d.cp}), ${d.provincia}` : "Retiro en el taller",
+    `${d.nombre} · ${d.tel} · ${d.email}`,
+  ].join("\n");
+  guardarCarrito([]);
+  contenido.innerHTML = `
+    <div class="listo">
+      <div class="tilde">✓</div>
+      <h1>¡Gracias, ${d.nombre.split(" ")[0]}!</h1>
+      <div class="num">PEDIDO ${numero}</div>
+      <p>Recibimos tu pedido por ${plata(c.total)}. ${d.pago === "transferencia" ? "Mandanos el pedido por WhatsApp y te pasamos los datos para transferir." : "Mandanos el pedido por WhatsApp y te pasamos el link para pagar en cuotas."}</p>
+      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}">Enviar por WhatsApp</a>
+      <a class="btn linea" href="index.html">Volver a la tienda</a>
+    </div>`;
+  window.scrollTo(0, 0);
+});
+
+pintar();
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Producto · Nido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+<style>
+.volver{display:inline-block;font-size:13px;color:var(--suave);margin:18px 0 26px}
+.volver:hover{color:var(--tinta)}
+.ficha{display:grid;grid-template-columns:1.15fr 1fr;gap:64px;align-items:start}
+.galeria{display:grid;grid-template-columns:72px 1fr;gap:14px}
+.miniaturas{display:flex;flex-direction:column;gap:10px}
+.miniaturas button{aspect-ratio:4/5;overflow:hidden;opacity:.5;transition:opacity .2s;outline-offset:2px}
+.miniaturas button.activa,.miniaturas button:hover{opacity:1}
+.miniaturas img{width:100%;height:100%;object-fit:cover}
+.principal{aspect-ratio:4/5;overflow:hidden;background:var(--crema);cursor:zoom-in;position:relative}
+.principal img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease-out,opacity .25s}
+.principal.zoom img{transform:scale(1.9)}
+.info{position:sticky;top:96px}
+.info h1{font-size:clamp(30px,3.4vw,42px);margin-bottom:12px}
+.info .precio{font-size:24px}
+.pago{margin:8px 0 26px;font-size:13.5px;color:var(--suave);line-height:1.8}
+.pago b{color:var(--tinta);font-weight:500}
+.pago .naranja{color:var(--acento)}
+.resumen{color:var(--texto);margin-bottom:28px}
+.etq{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--tinta);margin-bottom:10px;display:block}
+.colores{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.colores button{border:1px solid var(--linea);padding:8px 16px;font-size:13px;transition:.2s}
+.colores button[aria-pressed=true]{border-color:var(--tinta);background:var(--tinta);color:#fff}
+.comprar{display:flex;gap:10px;margin-bottom:34px}
+.cantidad{display:flex;align-items:center;border:1px solid var(--tinta)}
+.cantidad button{width:42px;height:100%;font-size:18px}
+.cantidad span{min-width:26px;text-align:center}
+.comprar .btn{flex:1}
+.comprar .btn.ok{background:var(--acento)}
+.datos{border-top:1px solid var(--linea)}
+.datos div{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--linea);font-size:14px}
+.datos dt{color:var(--suave)}
+.datos dd{color:var(--tinta)}
+.otros{margin-top:110px}
+.otros h2{font-size:24px;margin-bottom:26px}
+.otros .grilla{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.otros img{aspect-ratio:4/5;object-fit:cover;width:100%;margin-bottom:10px;transition:opacity .3s}
+.otros a:hover img{opacity:.85}
+.otros .n{font-family:Jost;color:var(--tinta)}
+@media (max-width:860px){
+  .ficha{grid-template-columns:1fr;gap:30px}
+  .galeria{grid-template-columns:1fr}
+  .miniaturas{flex-direction:row;order:2}
+  .miniaturas button{width:64px}
+  .info{position:static}
+  .otros .grilla{grid-template-columns:repeat(2,1fr)}
+  .otros .grilla a:nth-child(3){display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="ancho">
+  <a href="index.html" class="marca">NIDO</a>
+  <a href="checkout.html" class="bolsa">Carrito<span data-contador>0</span></a>
+</div></header>
+
+<main class="ancho">
+  <a href="index.html#productos" class="volver">← Volver</a>
+  <div class="ficha" id="ficha"></div>
+  <section class="otros"><h2>También te puede gustar</h2><div class="grilla" id="otros"></div></section>
+</main>
+
+<footer class="pie"><div class="ancho">
+  <span>© 2026 Nido · Deco en melamina</span>
+  <span><a href="#" id="wa">WhatsApp</a> · <a href="#">Instagram</a></span>
+</div></footer>
+
+<script src="tienda.js"></script>
+<script>
+const p = buscar(Number(new URLSearchParams(location.search).get("id"))) || productos[0];
+document.title = p.nombre + " · Nido";
+let color = p.colores[0], cant = 1;
+
+document.getElementById("ficha").innerHTML = `
+  <div class="galeria">
+    <div class="miniaturas">${Array.from({length:p.fotos}, (_, i) =>
+      `<button class="${i===0?"activa":""}" data-foto="${i+1}" aria-label="Ver foto ${i+1}"><img src="${foto(p,i+1)}" alt=""></button>`).join("")}</div>
+    <div class="principal" id="principal"><img id="grande" src="${foto(p,1)}" alt="${p.nombre}"></div>
+  </div>
+  <div class="info">
+    <h1>${p.nombre}</h1>
+    <div class="precio">${plata(p.precio)}</div>
+    <div class="pago">
+      <b>${CUOTAS} cuotas sin interés</b> de ${plata(p.precio / CUOTAS)}<br>
+      <span class="naranja">${plata(conTransferencia(p.precio))}</span> pagando por transferencia (${DESCUENTO_TRANSFERENCIA}% OFF)
+    </div>
+    <p class="resumen">${p.resumen}</p>
+    <span class="etq">Color: <span id="colorElegido">${color}</span></span>
+    <div class="colores">${p.colores.map((c, i) => `<button data-color="${c}" aria-pressed="${i===0}">${c}</button>`).join("")}</div>
+    <div class="comprar">
+      <div class="cantidad"><button data-mas="-1" aria-label="Restar">−</button><span id="cant">1</span><button data-mas="1" aria-label="Sumar">+</button></div>
+      <button class="btn" id="agregar">Agregar al carrito</button>
+    </div>
+    <dl class="datos">
+      <div><dt>Descripción</dt><dd>${p.detalle}</dd></div>
+      <div><dt>Medidas</dt><dd>${p.medidas}</dd></div>
+      <div><dt>Material</dt><dd>Melamina con canto ABS</dd></div>
+      <div><dt>Carga</dt><dd>${p.carga}</dd></div>
+      <div><dt>Envío</dt><dd>A todo el país. Gratis desde ${plata(ENVIO_GRATIS_DESDE)}.</dd></div>
+      <div><dt>Fabricación</dt><dd>5 a 7 días hábiles</dd></div>
+    </dl>
+  </div>`;
+
+document.getElementById("otros").innerHTML = productos.filter(o => o.id !== p.id).slice(0, 3).map(o => `
+  <a href="producto.html?id=${o.id}"><img src="${foto(o,1)}" alt="${o.nombre}" loading="lazy">
+  <div class="n">${o.nombre}</div><div class="extra">${plata(o.precio)}</div></a>`).join("");
+
+const grande = document.getElementById("grande"), principal = document.getElementById("principal");
+document.addEventListener("click", e => {
+  const m = e.target.closest("[data-foto]");
+  if (m) {
+    document.querySelectorAll("[data-foto]").forEach(b => b.classList.toggle("activa", b === m));
+    grande.style.opacity = 0;
+    setTimeout(() => { grande.src = foto(p, m.dataset.foto); grande.style.opacity = 1; }, 180);
+  }
+  const c = e.target.closest("[data-color]");
+  if (c) {
+    color = c.dataset.color;
+    document.querySelectorAll("[data-color]").forEach(b => b.setAttribute("aria-pressed", b === c));
+    document.getElementById("colorElegido").textContent = color;
+  }
+  const s = e.target.closest("[data-mas]");
+  if (s) { cant = Math.max(1, cant + Number(s.dataset.mas)); document.getElementById("cant").textContent = cant; }
+  if (c || s) { boton.textContent = "Agregar al carrito"; boton.classList.remove("ok"); }
+});
+
+// zoom: al pasar el mouse se agranda donde apuntás
+principal.addEventListener("pointermove", e => {
+  const r = principal.getBoundingClientRect();
+  grande.style.transformOrigin = `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`;
+});
+principal.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") principal.classList.add("zoom"); });
+principal.addEventListener("pointerleave", () => principal.classList.remove("zoom"));
+
+const boton = document.getElementById("agregar");
+boton.addEventListener("click", () => {
+  if (boton.classList.contains("ok")) { location.href = "checkout.html"; return; }
+  agregarAlCarrito(p.id, color, cant);
+  boton.textContent = "Agregado · Ir al carrito →";
+  boton.classList.add("ok");
+});
+
+document.getElementById("wa").href = `https://wa.me/${WHATSAPP}`;
+</script>
+</body>
+</html>
