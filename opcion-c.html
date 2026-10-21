@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opción C · Nido</title>
+<meta name="description" content="Objetos de deco en melamina hechos en Argentina.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+<style>
+
+.hero{position:relative;height:calc(100svh - 64px);min-height:560px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.flota{position:absolute;display:block;width:var(--w);aspect-ratio:4/5;left:var(--x);top:var(--y);z-index:var(--z)}
+.flota .in{display:block;width:100%;height:100%;overflow:hidden;box-shadow:0 20px 50px rgba(30,20,10,.18);transform:rotate(var(--r)) scale(.6);opacity:0;animation:entra 1.1s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--d)}
+.flota img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.flota .etq{position:absolute;left:0;bottom:-30px;font-size:12px;color:var(--tinta);opacity:0;transition:opacity .3s;white-space:nowrap}
+.flota:hover .etq{opacity:1}
+.flota:hover img{transform:scale(1.08)}
+@keyframes entra{to{transform:rotate(var(--r)) scale(1);opacity:1}}
+.centro{position:relative;z-index:5;pointer-events:none}
+.palabra{font-family:Jost;font-weight:700;color:var(--tinta);font-size:clamp(110px,24vw,340px);line-height:.8;letter-spacing:-.03em;mix-blend-mode:multiply}
+.centro div{margin-top:20px;font-size:13px;letter-spacing:.42em;text-transform:uppercase;color:var(--tinta)}
+.centro .btn{pointer-events:auto;margin-top:26px}
+.flecha{position:absolute;bottom:22px;font-size:14px;color:var(--suave);animation:baja 2.4s ease-in-out infinite;z-index:3}
+@keyframes baja{50%{transform:translateY(6px)}}
+@media (max-width:700px){.flota{width:calc(var(--w) * 2.1)}.flota .etq{display:none}}
+
+
+.productos{display:grid;grid-template-columns:repeat(3,1fr);gap:56px 28px}
+.card .fotos{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--crema);margin-bottom:16px}
+.card .fotos img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.card .fotos img + img{opacity:0}
+.card:hover .fotos img{transform:scale(1.04)}
+.card:hover .fotos img + img{opacity:1}
+.card .fila{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.card h3{font-size:18px}
+.encabezado{display:flex;justify-content:space-between;align-items:end;margin-bottom:36px;gap:16px}
+.encabezado h2{font-size:30px}
+.encabezado p{color:var(--suave);font-size:13px}
+
+.card .res{display:none}
+@media (max-width:860px){ .productos{grid-template-columns:repeat(2,1fr);gap:40px 16px} .card h3{font-size:15px} .card .fila{flex-direction:column;gap:0} }
+/* celular: un producto por pantalla, grande */
+@media (max-width:600px){
+  html{scroll-snap-type:y proximity}
+  .productos{grid-template-columns:1fr;gap:64px}
+  .card{scroll-snap-align:start;scroll-margin-top:76px}
+  .card .fotos{aspect-ratio:3/4;margin-bottom:18px}
+  .card .fila{flex-direction:row;justify-content:space-between;align-items:baseline}
+  .card h3{font-size:22px}
+  .card .precio{font-size:20px}
+  .card .res{display:block;margin-top:10px;color:var(--texto);font-size:14.5px}
+  .card .ver{display:inline-block;margin-top:14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta);border-bottom:1px solid var(--tinta);padding-bottom:2px}
+  .encabezado{flex-direction:column;align-items:start}
+}
+.card .ver{display:none}
+@media (max-width:600px){ .card .ver{display:inline-block} }
+@media (prefers-reduced-motion:reduce){ .flecha{animation:none} }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="ancho">
+  <a href="index.html" class="marca">NIDO</a>
+  <a href="checkout.html" class="bolsa">Carrito<span data-contador>0</span></a>
+</div></header>
+
+<section class="hero" id="hero">
+  <div id="flotantes"></div>
+  <div class="centro"><h1 class="palabra">NIDO</h1><div>Deco en melamina</div><a href="#productos" class="btn">Ver colección</a></div>
+  <a href="#productos" class="flecha" aria-label="Ver productos">↓</a>
+</section>
+
+<main class="ancho" id="productos">
+  <div class="encabezado">
+    <h2>Colección</h2>
+    <p>12 cuotas sin interés · <b style="color:var(--acento);font-weight:500">35% OFF</b> por transferencia</p>
+  </div>
+  <div class="productos" id="lista"></div>
+</main>
+
+<footer class="pie"><div class="ancho">
+  <span>© 2026 Nido · Deco en melamina</span>
+  <span><a href="#" id="wa">WhatsApp</a> · <a href="#">Instagram</a></span>
+</div></footer>
+
+<script src="tienda.js"></script>
+<script>
+document.getElementById("lista").innerHTML = productos.map(p => `
+  <a class="card" href="producto.html?id=${p.id}">
+    <div class="fotos"><img src="${foto(p,1)}" alt="${p.nombre}" loading="lazy"><img src="${foto(p,3)}" alt="" loading="lazy"></div>
+    <div class="fila"><h3>${p.nombre}</h3><span class="precio">${plata(p.precio)}</span></div>
+    <div class="extra"><b>${plata(conTransferencia(p.precio))}</b> por transferencia</div>
+    <p class="res">${p.resumen}</p>
+    <span class="ver">Ver detalles →</span>
+  </a>`).join("");
+
+document.getElementById("wa").href = `https://wa.me/${WHATSAPP}`;
+
+// las fotos de los productos flotan alrededor y se mueven con el mouse y el scroll
+const lugares = [
+  {x:"5%", y:"7%", w:"15vw", r:-6, z:1, p:.5}, {x:"79%", y:"5%", w:"13vw", r:5, z:6, p:.9},
+  {x:"3%", y:"57%", w:"12vw", r:4, z:6, p:1}, {x:"80%", y:"54%", w:"15vw", r:-4, z:1, p:.6},
+  {x:"27%", y:"68%", w:"10vw", r:-3, z:1, p:.35}, {x:"61%", y:"3%", w:"9vw", r:3, z:1, p:.3},
+];
+const caja = document.getElementById("flotantes");
+caja.innerHTML = productos.map((p, i) => { const l = lugares[i]; return `
+  <a class="flota" href="producto.html?id=${p.id}" data-p="${l.p}" style="--x:${l.x};--y:${l.y};--w:${l.w};--r:${l.r}deg;--z:${l.z};--d:${.15 + i * .09}s">
+    <span class="in"><img src="${foto(p,1)}" alt="${p.nombre}"></span><span class="etq">${p.nombre} · ${plata(p.precio)}</span></a>`; }).join("");
+const flotas = caja.querySelectorAll(".flota");
+let mx = 0, my = 0;
+function mover() { flotas.forEach(f => { const k = f.dataset.p * 40; f.style.transform = `translate(${mx * k}px, ${my * k - scrollY * f.dataset.p * .5}px)`; }); }
+document.getElementById("hero").addEventListener("pointermove", e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; requestAnimationFrame(mover); });
+addEventListener("scroll", () => requestAnimationFrame(mover), {passive:true});
+</script>
+</body>
+</html>

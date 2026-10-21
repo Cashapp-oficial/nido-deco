@@ -32,7 +32,23 @@
 .encabezado h2{font-size:30px}
 .encabezado p{color:var(--suave);font-size:13px}
 
+.card .res{display:none}
 @media (max-width:860px){ .productos{grid-template-columns:repeat(2,1fr);gap:40px 16px} .card h3{font-size:15px} .card .fila{flex-direction:column;gap:0} }
+/* celular: un producto por pantalla, grande */
+@media (max-width:600px){
+  html{scroll-snap-type:y proximity}
+  .productos{grid-template-columns:1fr;gap:64px}
+  .card{scroll-snap-align:start;scroll-margin-top:76px}
+  .card .fotos{aspect-ratio:3/4;margin-bottom:18px}
+  .card .fila{flex-direction:row;justify-content:space-between;align-items:baseline}
+  .card h3{font-size:22px}
+  .card .precio{font-size:20px}
+  .card .res{display:block;margin-top:10px;color:var(--texto);font-size:14.5px}
+  .card .ver{display:inline-block;margin-top:14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta);border-bottom:1px solid var(--tinta);padding-bottom:2px}
+  .encabezado{flex-direction:column;align-items:start}
+}
+.card .ver{display:none}
+@media (max-width:600px){ .card .ver{display:inline-block} }
 @media (prefers-reduced-motion:reduce){ .flecha{animation:none} }
 </style>
 </head>
@@ -70,6 +86,8 @@ document.getElementById("lista").innerHTML = productos.map(p => `
     <div class="fotos"><img src="${foto(p,1)}" alt="${p.nombre}" loading="lazy"><img src="${foto(p,3)}" alt="" loading="lazy"></div>
     <div class="fila"><h3>${p.nombre}</h3><span class="precio">${plata(p.precio)}</span></div>
     <div class="extra"><b>${plata(conTransferencia(p.precio))}</b> por transferencia</div>
+    <p class="res">${p.resumen}</p>
+    <span class="ver">Ver detalles →</span>
   </a>`).join("");
 
 document.getElementById("wa").href = `https://wa.me/${WHATSAPP}`;
