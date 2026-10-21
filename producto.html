@@ -41,20 +41,12 @@
 .datos div{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--linea);font-size:14px}
 .datos dt{color:var(--suave)}
 .datos dd{color:var(--tinta)}
-.otros{margin-top:110px}
-.otros h2{font-size:24px;margin-bottom:26px}
-.otros .grilla{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.otros img{aspect-ratio:4/5;object-fit:cover;width:100%;margin-bottom:10px;transition:opacity .3s}
-.otros a:hover img{opacity:.85}
-.otros .n{font-family:Jost;color:var(--tinta)}
 @media (max-width:860px){
   .ficha{grid-template-columns:1fr;gap:30px}
   .galeria{grid-template-columns:1fr}
   .miniaturas{flex-direction:row;order:2}
   .miniaturas button{width:64px}
   .info{position:static}
-  .otros .grilla{grid-template-columns:repeat(2,1fr)}
-  .otros .grilla a:nth-child(3){display:none}
 }
 </style>
 </head>
@@ -68,7 +60,6 @@
 <main class="ancho">
   <a href="index.html#productos" class="volver">← Volver</a>
   <div class="ficha" id="ficha"></div>
-  <section class="otros"><h2>También te puede gustar</h2><div class="grilla" id="otros"></div></section>
 </main>
 
 <footer class="pie"><div class="ancho">
@@ -112,9 +103,6 @@ document.getElementById("ficha").innerHTML = `
     </dl>
   </div>`;
 
-document.getElementById("otros").innerHTML = productos.filter(o => o.id !== p.id).slice(0, 3).map(o => `
-  <a href="producto.html?id=${o.id}"><img src="${foto(o,1)}" alt="${o.nombre}" loading="lazy">
-  <div class="n">${o.nombre}</div><div class="extra">${plata(o.precio)}</div></a>`).join("");
 
 const grande = document.getElementById("grande"), principal = document.getElementById("principal");
 document.addEventListener("click", e => {
